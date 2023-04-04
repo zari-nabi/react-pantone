@@ -1,24 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useMemo, useState } from 'react';
+import Navbar from './components/Navbar';
+import { BaseContextProvider } from './context';
+import Router from './Router';
+import { getFromLocalStorage } from './services/manageLocalStorage';
 
+//=======================================
+/**
+ * The App component displays the view of the application.
+ * @returns {JSX.Element} The App component.
+ */
+//=========================================
 function App() {
+
+  const [customColor, setCustomColor] = useState(null);
+  const [token, setToken] = useState(getFromLocalStorage("token"));
+  const [newUser, setNewUser] = useState({});
+
+  const memoizedValue = useMemo(() => ({
+    customColor, setCustomColor,
+    token, setToken,
+    newUser, setNewUser
+  }), [customColor, token, newUser]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BaseContextProvider value={memoizedValue}>
+      {token ? <Navbar /> : null}
+      <Router />
+    </BaseContextProvider>
   );
 }
 
